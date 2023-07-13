@@ -38,24 +38,7 @@ def create_download_link(filename, content):
         return f'<a href="data:text/plain;base64,{b64}" download="{filename}">Скачать описание теста</a>'
 
 
-def load_from_file():
-    uploaded_file = st.file_uploader("Choose a file", type="md")
-    if uploaded_file is not None:
-        content = uploaded_file.read().decode("utf-8")
-        content_dict = parse_file_content(content)
-        return content_dict
 
-def parse_file_content(content):
-    lines = content.split("\n")
-    fields = {}
-    current_field = None
-    for line in lines:
-        if line.startswith("# "):
-            current_field = line[2:]
-            fields[current_field] = ""
-        elif current_field is not None:
-            fields[current_field] += line + "\n"
-    return fields
 
 def get_user_input():
     st.title("Описание Идеи A/B теста")
@@ -72,7 +55,7 @@ def get_user_input():
         
     with st.expander("Гипотеза:"):
         st.subheader("Описание проблемы и цели теста:")
-        test_goal = st.text_area("Здесь описывается основная цель и проблема которую планируем решить", value="Цель Теста:",
+        test_goal = st.text_area("Здесь описывается основная цель и проблема которую планируем решить", value="",
                                 help="Опишите, что вы хотите достичь с помощью этого теста. Это может быть увеличение конверсии, улучшение вовлеченности пользователей, снижение оттока и т.д.",
                                 placeholder="Опишите, что вы хотите достичь с помощью этого теста. Это может быть увеличение конверсии, улучшение вовлеченности пользователей, снижение оттока и т.д."
                             )
