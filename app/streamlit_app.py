@@ -26,7 +26,7 @@ def get_next_file_index():
 
 def save_to_file(content, file_name_prefix):
     index = get_next_file_index()
-    file_name = f"{file_name_prefix}_{index}.md"
+    file_name = f"files/{file_name_prefix}_{index}.md"
     with open(file_name, 'w') as file:
         file.write(content)
     return file_name
