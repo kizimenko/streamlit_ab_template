@@ -5,6 +5,8 @@ FROM python:3.11-slim-buster
 # вывода Python в реальном времени без буферизации
 ENV PYTHONUNBUFFERED=1
 
+WORKDIR /usr/src/app
+
 # Обновляем пакетный менеджер и устанавливаем зависимости
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -15,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Клонируем репозиторий из GitHub в текущую директорию
 RUN git clone https://github.com/kizimenko/streamlit_ab_template.git 
 
-WORKDIR /streamlit_ab_template/app
+WORKDIR /usr/src/app/streamlit_ab_template/app
 
 # Устанавливаем зависимости Python из файла requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
@@ -27,4 +29,4 @@ EXPOSE 8501
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
 # Запускаем приложение Streamlit при запуске контейнера
-CMD ["streamlit", "run", "app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
