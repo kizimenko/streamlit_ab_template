@@ -7,7 +7,7 @@ st.set_page_config(
 
 def get_next_file_index():
     import os
-    counter_file = "counter.txt"
+    counter_file = "files/counter.txt"
 
     # Если файл счетчика не существует, создайте его
     if not os.path.isfile(counter_file):
