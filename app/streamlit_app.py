@@ -46,12 +46,16 @@ def get_user_input():
     # content_dict = load_from_file()
     # if content_dict is None:
     #     content_dict = {}
-    col1, col2 = st.columns(2)
-    
+    col1, col2, col3 = st.columns(3)
     with col1:
-        projects = st.text_input("Подразделение", "")
+        projects = st.selectbox(
+        'В каком проекте будет АБ?',
+        ('Mostbet', 'BetAndreas', 'Vivi'))
+    with col3:
+        department = st.text_input("Подразделение", "")
     with col2:
         telegram = st.text_input("Телеграм автора", "")
+ 
         
     title = st.text_input("Название идеи для GrowthBook", "", help="Введите название которое будет отображаться в GrowthBook")
        
@@ -193,7 +197,7 @@ def get_user_input():
     
 
     # Создание ссылки на скачивание файла
-    if st.button("Сохранить"):
+    if st.button("Сохранить и отправить в GrowthBook"):
         st.text("\n\n\n\n\n")
         if title == "":
             st.error("Введите название идеи")
@@ -201,7 +205,7 @@ def get_user_input():
         if hypothesis == "":
             st.error("Введите гипотезу")
             return  
-        content = (f"Подразделение: {projects}, Телеграм автора: {telegram}\n\n"
+        content = (f"Подразделение: {department}, Телеграм автора: {telegram}\n\n"
                     "___\n"
                     "## Описание проблемы и цели теста:\n" + test_goal + "\n\n"
                     "## Как будем решать:\n" + idea_desc + "\n\n"
@@ -222,7 +226,7 @@ def get_user_input():
                     "### Требуется привлечение дизайнеров?\n" + str(design) + "\n\n"
                 )
 
-        idea,idea_id  = make_idea_body(title=title, ice=ice_score, details=content)
+        idea,idea_id  = make_idea_body(title=title, ice=ice_score, details=content, project=projects)
         save_idea(idea)
 
         file_name = save_to_file(content, "ab_description")

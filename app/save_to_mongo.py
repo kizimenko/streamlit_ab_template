@@ -35,18 +35,25 @@ def generate_idea_id():
 
 
 
-def make_idea_body(title,ice,details):
+
+def make_idea_body(title,ice,details,project):
+    project = project.lower()
+    project_dicts = {
+        'mostbet':'prj_eevpg1olkvhywr4',
+        'betandreas':'prj_eevpg1mlkmgo2fk',
+        'bivi':'prj_eevpg1olkvhz17c',
+    }
     idea_id = generate_idea_id()  
+
     idea = {
     "id": idea_id,
     "text": title,
     "archived": False,
     "userId": "u_eevpg1tlgmilc36",
     "organization": "org_eevpg1tlgmilj1j",
-    "project": "prj_eevpg1oli02xqwi",
+    "project": f'{project_dicts[project]}',
     "tags": [f"ICE:{ice}"],
     "votes": [],
-    "impactScore": 0,
     "experimentLength": 7,
     "details":details,
     }
