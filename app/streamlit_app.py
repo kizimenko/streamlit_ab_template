@@ -203,8 +203,8 @@ def get_user_input():
             return  
         content = (f"Подразделение: {projects}, Телеграм автора: {telegram}\n\n"
                     "___\n"
-                    "## Цель Теста:\n" + test_goal + "\n\n"
-                    "## Описание идеи:\n" + idea_desc + "\n\n"
+                    "## Описание проблемы и цели теста:\n" + test_goal + "\n\n"
+                    "## Как будем решать:\n" + idea_desc + "\n\n"
                     "## Предварительный Анализ:\n" + preliminary_analysis + "\n\n"
                     "___\n"
                     "# Гипотеза:\n```#0969DA \n" + hypothesis + "\n```\n\n"
