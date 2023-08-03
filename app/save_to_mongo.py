@@ -6,9 +6,9 @@ import string
 
 import os
 
-MONGO_URL = os.environ.get("MONGO_URL")
+MONGODB_URI = os.environ.get("MONGODB_URI")
 # Create a MongoDB client and connect to the database
-client = MongoClient(MONGO_URL)
+client = MongoClient(MONGODB_URI)
 db = client["test"]  # Replace "your_database_name" with your actual database name
 collection = db["ideas"]  # Replace "ideas" with your desired collection name
 
