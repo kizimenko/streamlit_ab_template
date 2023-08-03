@@ -70,9 +70,38 @@ def get_user_input():
                               placeholder="""Укажите свои предположения о том, как предложенные изменения повлияют на пользовательское поведение. Например: "Предполагается, что изменение цвета кнопки на более яркий приведет к увеличению кликабельности"."""
                               )
         st.subheader("Метрики для анализа:")
-        metrics = st.text_area("Метрики на которые мы стараемся повлиять и на которые не хотелось бы влиять", "",
-                           placeholder=' Перечислите метрики, по которым будет оцениваться результат теста. Это может быть конверсия, среднее время на сайте, частота кликов и т.д.'
-                           )
+       # Создаем словарь для хранения значений метрик, где ключ - это имя метрики, а значение - это показатель
+        metrics = st.session_state.get('metrics', {})
+
+        # Кнопка для добавления метрики
+        if st.button('Добавить метрику'):
+            # Создаем уникальный ключ для новой метрики
+            new_key = f'metric_{len(metrics) + 1}'
+            metrics[new_key] = {'name': '', 'lift': ''}
+            st.session_state.metrics = metrics
+
+        col1, col2 = st.columns(2)
+        # Отображаем каждую метрику из словаря
+        for key, metric_data in metrics.items():
+            # Функция st.text_input возвращает новое значение поля при каждом изменении
+            with col1:
+                metric_data['name'] = st.text_input(f'Имя метрики ', metric_data['name'], help='Укажите название метрики, которую вы хотите отслеживать. Например, это может быть конверсия, среднее время на сайте, частота кликов и т.д.',key=f'name_{key}')
+            with col2:
+                metric_data['lift'] = st.text_input(f'Ожидаемое процентное изменение', metric_data['lift'], help='Укажите, насколько вы ожидаете, что изменения повлияют на метрику. Например, если вы ожидаете, что конверсия увеличится на 10%, то укажите 10.',key=f'lift_{key}')
+
+        # metrics = st.text_area("Метрики на которые мы стараемся повлиять и на которые не хотелось бы влиять", "",
+        #                    placeholder=' Перечислите метрики, по которым будет оцениваться результат теста. Это может быть конверсия, среднее время на сайте, частота кликов и т.д.'
+        #                    )
+        
+        # Записываем метрики в Markdown-таблицу вручную
+        markdown_table = "| Название метрики | Изменение |\n"
+        markdown_table += "|-----------------|-----------|\n"
+        for metric_data in metrics.values():
+            markdown_table += f"| {metric_data['name']} | {metric_data['lift']} |\n"
+        
+        # st.write('Markdown-таблица:')
+        # st.markdown(markdown_table, unsafe_allow_html=True)
+
     with st.expander("Предварительный Анализ:"):    
         st.subheader("Предварительный Анализ:")
         preliminary_analysis = st.text_area("Если были исследования или беглый ресерч то описать", "",
@@ -169,20 +198,28 @@ def get_user_input():
         if title == "":
             st.error("Введите название идеи")
             return
+        if hypothesis == "":
+            st.error("Введите гипотезу")
+            return  
         content = (f"Подразделение: {projects}, Телеграм автора: {telegram}\n\n"
-                    "# Описание Идеи A/B теста\n\n"
+                    "___"
                     "## Цель Теста:\n" + test_goal + "\n\n"
                     "## Описание идеи:\n" + idea_desc + "\n\n"
                     "## Предварительный Анализ:\n" + preliminary_analysis + "\n\n"
-                    "# Гипотеза:\n```" + hypothesis + "```\n\n"
+                    "___"
+                    "# Гипотеза:\n```#0969DA" + hypothesis + "```\n\n"
+                    "___"
                     "# Дизайн Теста\n\n"
                     "## Варианты Теста:\n" + test_variants + "\n\n"
-                    "## Метрики для анализа:\n" + metrics + "\n\n"
+                    "## Метрики для анализа:\n" + markdown_table + "\n\n"
                     "## Сегментация:\n" + segmentation + "\n\n"
                     "## Период проведения теста:\n" + test_period + "\n\n"
+                    "___"
                     "# Результаты\n\n"
                     "## Сырые Данные:\n" + raw_data + "\n\n"
                     "## Оценка идеи\n\n" + f"\nTotal: {ice_score} \n - impact: {impact[0]} \n - confidence: {confidence[0]} \n - ease: {ease[0]} \n\n"
+                    "### Требуется привлечение разработки?\n" + str(devs) + "\n\n"
+                    "### Требуется привлечение дизайнеров?\n" + str(design) + "\n\n"
                 )
 
         idea,idea_id  = make_idea_body(title=title, ice=ice_score, details=content)
