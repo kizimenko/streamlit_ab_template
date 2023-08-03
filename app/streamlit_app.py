@@ -1,4 +1,5 @@
 import streamlit as st
+from save_to_mongo import save_idea, make_idea_body
 
 st.set_page_config(
     page_title="AB Test Description Generator",
@@ -52,7 +53,8 @@ def get_user_input():
     with col2:
         telegram = st.text_input("Телеграм автора", "")
         
-        
+    title = st.text_input("Название идеи для GrowthBook", "", help="Введите название которое будет отображаться в GrowthBook")
+       
     with st.expander("Гипотеза:"):
         st.subheader("Описание проблемы и цели теста:")
         test_goal = st.text_area("Здесь описывается основная цель и проблема которую планируем решить", value="",
@@ -164,26 +166,33 @@ def get_user_input():
     # Создание ссылки на скачивание файла
     if st.button("Сохранить"):
         st.text("\n\n\n\n\n")
+        if title == "":
+            st.error("Введите название идеи")
+            return
         content = (f"Подразделение: {projects}, Телеграм автора: {telegram}\n\n"
-                    "## Описание Идеи A/B теста\n\n"
-                    "### Цель Теста:\n" + test_goal + "\n\n"
-                    "### Описание идеи:\n" + idea_desc + "\n\n"
-                    "### Предварительный Анализ:\n" + preliminary_analysis + "\n\n"
-                    "## Гипотеза:\n" + hypothesis + "\n\n"
-                    "## Дизайн Теста\n\n"
-                    "### Варианты Теста:\n" + test_variants + "\n\n"
-                    "### Метрики для анализа:\n" + metrics + "\n\n"
-                    "### Сегментация:\n" + segmentation + "\n\n"
-                    "### Период проведения теста:\n" + test_period + "\n\n"
-                    "## Результаты\n\n"
-                    "### Сырые Данные:\n" + raw_data + "\n\n"
-                    "### Оценка идеи\n\n" + f"\nTotal: {ice_score} \n - impact: {impact[0]} \n - confidence: {confidence[0]} \n - ease: {ease[0]} \n\n"
+                    "# Описание Идеи A/B теста\n\n"
+                    "## Цель Теста:\n" + test_goal + "\n\n"
+                    "## Описание идеи:\n" + idea_desc + "\n\n"
+                    "## Предварительный Анализ:\n" + preliminary_analysis + "\n\n"
+                    "# Гипотеза:\n```" + hypothesis + "```\n\n"
+                    "# Дизайн Теста\n\n"
+                    "## Варианты Теста:\n" + test_variants + "\n\n"
+                    "## Метрики для анализа:\n" + metrics + "\n\n"
+                    "## Сегментация:\n" + segmentation + "\n\n"
+                    "## Период проведения теста:\n" + test_period + "\n\n"
+                    "# Результаты\n\n"
+                    "## Сырые Данные:\n" + raw_data + "\n\n"
+                    "## Оценка идеи\n\n" + f"\nTotal: {ice_score} \n - impact: {impact[0]} \n - confidence: {confidence[0]} \n - ease: {ease[0]} \n\n"
                 )
 
+        idea,idea_id  = make_idea_body(title=title, ice=ice_score, details=content)
+        save_idea(idea)
 
         file_name = save_to_file(content, "ab_description")
 
-        st.success("Ваше описание теста успешно сохранено.")
+        href='https://gb.lnabew.com/idea/'+idea_id
+        
+        st.success(f"Ваше описание теста успешно сохранено. Ссылка на идею в GrowthBook: {href}")
         st.markdown(create_download_link(file_name, content), unsafe_allow_html=True)
 
 
